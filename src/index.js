@@ -1,5 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import SeasonDisplay from "./SeasonDisplay";
+import Spinner from "./Spinner";
 
 // Functional component:
 // const App = () => {
@@ -15,36 +17,33 @@ import ReactDOM from 'react-dom';
 // Class based component
 // We are subclassing React.Component, basically borrowing functionality into our App class
 class App extends React.Component {
-    state = {lat: null, errorMessage: '' };
-    
+  // state is the same as the constructor function, babel does it for us
+  state = { lat: null, errorMessage: "" };
 
-    componentDidMount() {
-        window.navigator.geolocation.getCurrentPosition(
-            position => this.setState( { lat: position.coords.latitude }),
-            err => this.setState({ errorMessage: err.message })   
-        )
+  componentDidMount() {
+    window.navigator.geolocation.getCurrentPosition(
+      position => this.setState({ lat: position.coords.latitude }),
+      err => this.setState({ errorMessage: err.message })
+    );
+  }
+
+  // conditional rendering - returning different JSX depending on state/props of the component
+  // helper func
+  renderContent() {
+    if (this.state.errorMessage && !this.state.lat) {
+      return <div>Error: {this.state.errorMessage}</div>;
     }
 
-    // We have to define render when using React
-    render() {  
-        // return (
-        // <div>Latitude: {this.state.lat}
-        // < br />
-        // Error: {this.state.errorMessage}
-        // </div>
-        // );
-
-        // conditional rendering - returning different JSX depending on state/props of the component
-        if (this.state.errorMessage && !this.state.lat) {
-        return <div>Error: { this.state.errorMessage}</div>
-        }
-        if(!this.state.errorMessage && this.state.lat) {
-            return <div>Latitude: {this.state.lat}</div>
-        }
-        return <div>Loading!</div>
+    if (!this.state.errorMessage && this.state.lat) {
+      return <SeasonDisplay lat={this.state.lat} />;
     }
+
+    return <Spinner message="Please accept location request" />;
+  }
+
+  render() {
+    return <div className="border red">{this.renderContent()}</div>;
+  }
 }
 
-
-ReactDOM.render(<App />, document.getElementById('root'));
-
+ReactDOM.render(<App />, document.querySelector("#root"));
