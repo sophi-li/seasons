@@ -3,17 +3,6 @@ import ReactDOM from "react-dom";
 import SeasonDisplay from "./SeasonDisplay";
 import Spinner from "./Spinner";
 
-// Functional component:
-// const App = () => {
-//     window.navigator.geolocation.getCurrentPosition(
-//         (position) => console.log(position),
-//         (err) => console.log(err)
-//     )
-//     return (
-//     <div>Latitude: </div>
-//     )
-// }
-
 // Class based component
 // We are subclassing React.Component, basically borrowing functionality into our App class
 class App extends React.Component {
@@ -27,22 +16,16 @@ class App extends React.Component {
     );
   }
 
-  // conditional rendering - returning different JSX depending on state/props of the component
-  // helper func
-  renderContent() {
-    if (this.state.errorMessage && !this.state.lat) {
-      return <div>Error: {this.state.errorMessage}</div>;
-    }
-
-    if (!this.state.errorMessage && this.state.lat) {
-      return <SeasonDisplay lat={this.state.lat} />;
-    }
-
-    return <Spinner message="Please accept location request" />;
-  }
-
   render() {
-    return <div className="border red">{this.renderContent()}</div>;
+    const { errorMessage, lat } = this.state
+
+    return (
+      <div className="border red">
+        { (errorMessage && !lat) && <div>Error: {this.state.errorMessage}</div> }
+        { (!errorMessage && lat) && <SeasonDisplay lat={this.state.lat} /> } 
+        { (errorMessage && lat) && <Spinner message="Please accept location request" /> }
+      </div>
+    )
   }
 }
 
